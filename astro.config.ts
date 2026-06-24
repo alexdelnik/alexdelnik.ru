@@ -6,7 +6,6 @@ import mdx from "@astrojs/mdx";
 // import { beastiesIntegration } from './src/integrations/beasties';
 
 // Custom domain - used for production builds
-const DEFAULT_SITE = 'https://nicetat.samcarlton.com';
 
 /**
  * Get site URL from hosting provider env vars.
@@ -58,7 +57,7 @@ function getSiteUrl(): string {
 export default defineConfig({
   output: 'static',
   // Required for sitemap, canonical URLs, OG images
-  site: getSiteUrl(),
+  site: 'https://alexdelnik.github.io',
   integrations: [
     tailwind(),
     sitemap(),
