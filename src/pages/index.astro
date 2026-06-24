@@ -1,0 +1,65 @@
+---
+/**
+ * Home page with automatic article listing.
+ * Articles are MDX files using BlogLayout.
+ */
+import Layout from '../layouts/Layout.astro'
+
+/**
+ * Article frontmatter shape for MDX pages.
+ */
+interface ArticleFrontmatter {
+  title?: string;
+  description?: string;
+  publishDate?: string;
+  layout?: string;
+}
+
+interface ArticleModule {
+  frontmatter: ArticleFrontmatter;
+  url?: string;
+}
+
+// Use import.meta.glob (modern replacement for Astro.glob)
+const mdxModules = import.meta.glob<ArticleModule>(
+  './*.mdx',
+  { eager: true }
+)
+
+// Filter to only pages using BlogLayout
+const articles = Object.entries(mdxModules)
+  .filter(([_, module]) => {
+    const layout = module.frontmatter?.layout
+    return layout?.includes('BlogLayout')
+  })
+  .map(([filepath, module]) => {
+    // Convert filepath to URL: ./example-article.mdx -> /example-article
+    const url = filepath
+      .replace('./', '/')
+      .replace('.mdx', '')
+    return {
+      title: module.frontmatter?.title,
+      description: module.frontmatter?.description,
+      publishDate: module.frontmatter?.publishDate,
+      url,
+    }
+  })
+  // Sort by date, newest first
+  .sort((a, b) => {
+    const dateA = new Date(a.publishDate || 0)
+    const dateB = new Date(b.publishDate || 0)
+    return dateB.getTime() - dateA.getTime()
+  })
+---
+
+<Layout frontmatter={{ title: 'Alexdelnik page' }}>
+  <!-- Markdown Preview - https://dillinger.io/ -->
+
+  <h1>Alexdelnik page</h1>
+
+  <p><a href="https://www.youtube.com">youtube</a></p>
+  <p><a href="https://github.com">github</a></p>
+  <p><a href="https://x.com">twitter</a></p>
+
+
+</Layout>
